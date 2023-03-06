@@ -1,0 +1,91 @@
+﻿@model IEnumerable<IndyBooks.Models.Book>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewBag.Title = "Admin Search";
+    Layout = "_Layout";
+}
+
+<h3>Search Result</h3>
+
+
+<table class="table">
+    <tr>
+        <th>Title</th>
+        <th>Author</th>
+        <th>SKU</th>
+        <th>Price</th>
+        <th>Action</th>
+    </tr>
+    @foreach (var book in Model)
+    {
+        <tr>
+            <td>
+                @book.Title
+            </td>
+            <td data-id="@book.Author.Id">
+                <!-- AJAX call to API assigns a tooltip with book count here -->
+                @book.Author.Name
+            </td>
+            <td class="rightedge">
+                @book.SKU
+            </td>
+            <td class="rightedge">
+                $@book.Price.ToString("#.00")
+            </td>
+            <td>
+                <a asp-action="DeleteBook" asp-controller="Admin"
+                   asp-route-id="@book.Id">Remove</a> |
+                <a asp-action="UpdateBook" asp-controller="Admin"
+                   asp-route-id="@book.Id">Update</a>
+            </td>
+        </tr>
+    }
+    @foreach (var book in Model)
+    {
+        <tr>
+            <td>
+                @book.Title
+            </td>
+            <td>
+                @book.Author.Name
+            </td>
+            <td class="rightedge">
+                @book.SKU
+            </td>
+            <td class="rightedge">
+                $@book.Price.ToString("#.00")
+            </td>
+            <td class="rightedge">
+                <!-- TODO: Note how the book Id is set into each "Remove" link in the list -->
+                <a asp-action="DeleteBook" asp-controller="Admin"
+                   asp-route-id="@book.Id">Remove</a> |
+                <!-- TODO: Add an "Update action link here-->
+                <a asp-action="UpdateBook" asp-controller="Admin"
+                   asp-route-id="@book.Id">Update</a>
+            </td>
+        </tr>
+    }
+
+</table>
+<script>/*
+    jQuery tooltip provides the hover effect,
+    AJAX call to '/api/writer/bookcount/{id}' gets the JSON data
+    for the book count for the given author id
+ */
+$(function () {
+    $(document).tooltip({
+        items: "[data-id]", /* hovering over these elements will call the function below */
+        content: function(){
+            /* Get the book id from the HTML */
+            var id = this.attributes["data-id"].nodeValue;
+            /* Call the API */
+            $.getJSON('/api/writerapi/' + id + '/bookcount', function (data) {
+                /* uses JS to add a title attribute to the hovered item */
+                $("[data-id =" + id + "]")
+                    /* creates the title using the JSON 'data' from the API */
+                    .attr('title', 'Book Count: ' + data[0].count)
+            });
+         }
+    });
+ });</script>
+
