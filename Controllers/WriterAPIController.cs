@@ -17,16 +17,30 @@ namespace IndyBooks.Controllers
         /**
          * BOOK COUNT: returns the count of all the books by a single Author
          */
-        //TODO: Write the [HttpGet] annotation with the API route for this call
-        
+        //TODO: Write the [HttpGet] annotation with the API route for this call - DONE
+
+        [HttpGet("{id}/bookcount")]
         public IActionResult GetCount(long id)
         {
-            //TODO: return BadRequest if the id value is not greater than zero
-            return BadRequest();
-            //TODO: return NotFound if their are no writers in the db with the id
+            //TODO: return BadRequest if the id value is not greater than zero - DONE
+            if (id == 0)
+            {
+                return BadRequest();
+            }
+            //TODO: return NotFound if their are no writers in the db with the id - DONE
+            if (!_db.Writers.Any(w => w.Id == id)) 
+            { 
+                return NotFound(); 
+            }
+            //TODO: return OK with the AJAX data as a new object, e.g.,{ id=5, count=6 } for the given writer - done
+            //find writer
+            //get books
+            //count books
+            //var writers = _db.Writers.Include(w => w.Books).Single(w => w.Id = id);
+            int bookCount = (_db.Writers.Where(w => w.Id == id)).Select(w => w.Books.Count()).FirstOrDefault();
+            var data = new { id = id, bookcount = bookCount };
             
-            //TODO: return OK with the AJAX data as a new object, e.g.,{ id=5, count=6 } for the given writer
-
+            return Ok(data);
         }
 
         /**

@@ -83,7 +83,7 @@ $(function () {
                 /* uses JS to add a title attribute to the hovered item */
                 $("[data-id =" + id + "]")
                     /* creates the title using the JSON 'data' from the API */
-                    .attr('title', 'Book Count: ' + data[0].count)
+                    .attr('title', 'Book Count: ' + data.count)
             });
          }
     });
